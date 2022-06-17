@@ -5,9 +5,9 @@
 	> El Oro se otorga solo 1 vez por Ip. Solo el primer personaje del jugador recibirá el oro.
 ]]
 -------------------------------------------------------------------------------
-local Level = 80 	 		 --> Nivel al que suben los jugadores al ser promocionados.
-local NPC_ID = 200003 		 --> El ID del NPC que estará a cargo del Script.
-local Promos = 2 	  		 --> Número de promociones permitidas por IP.
+local Level = 80 	     --> Nivel al que suben los jugadores al ser promocionados.
+local NPC_ID = 00000 	     --> Coloca el ID del NPC que estará a cargo del Script.
+local Promos = 2 	     --> Número de promociones permitidas por IP.
 local Oro = {12500,'12,500'} --> Coloca la cantidad de Oro que desees regalar, y entre comillas su contraparte textual.
 local Borrar_Items_DK = true --> Coloca true si quieres que al DK se le elimine todo el equipo de nacimiento y misiones de zona.
 
@@ -22,9 +22,9 @@ local GEAR = {
 		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
 		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
 		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}}, --|> Nota: El item ID 25 es una espada de una mano de calidad gris.
-	[4]={--Cazador																		   --|>       Por esto, en el slot de arma principal, está el ID 17
+	[4]={--Cazador										   --|>       Por esto, en el slot de arma principal, está el ID 17
 		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}}, --|>       para no equipar esta arma, el item ID 17 es una camisa,
-	[8]={--Pícaro																		   --|>       por ende, no entra en el slot de arma.
+	[8]={--Pícaro										   --|>       por ende, no entra en el slot de arma.
 		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
 	[16]={--Sacerdote
 		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
@@ -200,7 +200,7 @@ local function MenuClick(e,p,u,s,int) p:GossipComplete() local R = p:GetRaceMask
 
 		if X2 == nil then
 			p:SendBroadcastMessage('La información de las promociones no se está '
-				..'insertando correctamente en la Base de Datos, eleva este problema a un desarrollador.')	-- O escríbeme a ariel.cami.dos@gmail.com		
+				..'insertando correctamente en la Base de Datos, eleva este problema a un desarrollador.') --O escríbeme a ariel.cami.dos@gmail.com		
 		else
 			if X2==0 then 	
 				local function Timed2(ev, del, rep, wp)
