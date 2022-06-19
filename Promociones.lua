@@ -5,48 +5,50 @@
 	> El Oro se otorga solo 1 vez por Ip. Solo el primer personaje del jugador recibirá el oro.
 ]]
 -------------------------------------------------------------------------------
-local Level = 80 	     --> Nivel al que suben los jugadores al ser promocionados.
-local NPC_ID = 00000 	     --> Coloca el ID del NPC que estará a cargo del Script.
-local Promos = 2 	     --> Número de promociones permitidas por IP.
+local Level = 80 	 		 --> Nivel al que suben los jugadores al ser promocionados.
+local NPC_ID = 0000 		 	 --> El ID del NPC que estará a cargo del Script.
+local Promos = 2 	  		 --> Número de promociones permitidas por IP.
 local Oro = {12500,'12,500'} --> Coloca la cantidad de Oro que desees regalar, y entre comillas su contraparte textual.
-local Borrar_Items_DK = true --> Coloca true si quieres que al DK se le elimine todo el equipo de nacimiento y misiones de zona.
+local Borrar_Items_DK = true --> false/true: Coloca true si quieres que al DK se le elimine todo el equipo de nacimiento y misiones de zona.
 
 local GEAR = {
 --Nota: Los slots que veas con ID 25 y 17, significa que estan vacíos, nunca coloques el Cero porque crashea el emulador.
 --COLOCA LOS IDS DE LOS ITEMS QUE DESEAS REGALAR, DE ACUERDO AL ORDEN MENCIONADO ABAJO.
---ORDEN: {Cabeza,Hombro,Aba1,Aba2,Cuello,Pecho,Cintura,Piernas,Pies,Muñeca,Manos,Dedo1,Dedo2,Espalda,MainHand,OffHand,Rango-Reliquia,Camisa,Tabardo}
-	[1]= {--Guerrero
-		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},  --|> 1=Tank , 2=Melee DPS , 3=Heal , 4=Spell DPS
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},	
-	[2]={--Paladín
-		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}}, --|> Nota: El item ID 25 es una espada de una mano de calidad gris.
-	[4]={--Cazador										   --|>       Por esto, en el slot de arma principal, está el ID 17
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}}, --|>       para no equipar esta arma, el item ID 17 es una camisa,
-	[8]={--Pícaro										   --|>       por ende, no entra en el slot de arma.
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
-	[16]={--Sacerdote
-		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
-	[32]={--Caballero de la Muerte
-		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
-	[64]={--Chamán
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
-	[128]={--Mago
-		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
-	[256]={--Brujo
-		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}},
-	[1024]={--Druida
-		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25},
-		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25, 25, 25}}}
+--ORDEN:
+--{Cabeza,Cuello,Hombros,Espalda,Pecho,Camisa,Tabardo,Muñecas,Manos,Cintura,Piernas,Pies,Dedo1,Dedo2,Aba1,Aba2,M_Der,M_Izq,Rango_Reliquia}
 
-----------------NO TOCAR NADA DESDE ESTA LINEA PARA ABAJO/ /NO SOY RESPONSABLE POR EL BUEN O MAL USO QUE LE DES A ESTE SCRIPT-------------------
+	[1]= {--Guerrero
+		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},  --|> [1]=Tank , [2]=Melee DPS , [3]=Heal , [4]=Spell DPS
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},	
+	[2]={--Paladín
+		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}}, --|> Nota: El item ID 25 es una espada de una mano de calidad gris.
+	[4]={--Cazador										   --|>       Por esto, en el slot de arma principal, está el ID 17
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}}, --|>       para no equipar esta arma, el item ID 17 es una camisa,
+	[8]={--Pícaro										   --|>       por ende, no entra en el slot de arma.
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},
+	[16]={--Sacerdote
+		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},
+	[32]={--Caballero de la Muerte
+		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},
+	[64]={--Chamán
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},
+	[128]={--Mago
+		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},
+	[256]={--Brujo
+		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}},
+	[1024]={--Druida
+		[1]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[2]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[3]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25},
+		[4]={25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 17, 25, 25}}}
+
+----------------NO TOCAR NADA DESDE ESTA LINEA PARA ABAJO/---/NO SOY RESPONSABLE POR EL MAL USO QUE LE DES A ESTE SCRIPT--------------------
 local War,Pal,Hun,Rog,Pri,Dea,Sha,Mag,Loc,Dru,Tank,Mele,Heal,Spel = 1,2,4,8,16,32,64,128,256,1024,1,2,3,4
 
 local CLASE_M = {[1]='|cffc49c79Guerrero',[2]='|cffff94f8Paladín',[4]='|cffa0c156Cazador',[8]='|cfff6f350Pícaro',[16]='|cffffffffSacerdote',
@@ -62,7 +64,7 @@ local RAZA_F = {[1]='|cff00a6ffHumana',[2]='|cffff0000Orco',[4]='|cff00a6ffEnana
 [32]='|cffff0000Tauren',[64]='|cff00a6ffGnoma',[128]='|cffff0000Trol',[512]='|cffff0000Elfa de sangre',[1024]='|cff00a6ffDraenei'}
 
 local build = {'Tanque','Dps','Sanador','Dps Mágico'}
-local slot = {0,2,12,13,1,4,5,6,7,8,9,10,11,14,15,16,17,3,18}
+local slot = {0,1,2,14,4,3,18,8,9,5,6,7,10,11,12,13,15,16,17}
 
 local tele = {
 	[1]={--Horda
@@ -200,7 +202,7 @@ local function MenuClick(e,p,u,s,int) p:GossipComplete() local R = p:GetRaceMask
 
 		if X2 == nil then
 			p:SendBroadcastMessage('La información de las promociones no se está '
-				..'insertando correctamente en la Base de Datos, eleva este problema a un desarrollador.') --O escríbeme a ariel.cami.dos@gmail.com		
+				..'insertando correctamente en la Base de Datos, eleva este problema a un desarrollador.')-- O escríbeme a ariel.cami.dos@gmail.com		
 		else
 			if X2==0 then 	
 				local function Timed2(ev, del, rep, wp)
@@ -236,7 +238,7 @@ end
 local function LogIn(e,p) --// Se activa cuando un jugador logea.
 	local guid, ip = tonumber( p:GetGUIDLow() ), p:GetPlayerIP() 
 	AuthDBExecute("INSERT IGNORE INTO `_promos` (`charguid`, `ip`, `promos`) VALUES ("..guid..", '"..ip.."' , 0)")
-	AuthDBExecute("UPDATE `_promos` SET `ip` = '"..ip.."' WHERE `charguid` = "..guid.."") --> Por si cambian el IP
+	AuthDBExecute("UPDATE `_promos` SET `ip` = '"..ip.."' WHERE `charguid` = "..guid.."") 	-----------------------> Por si cambian el IP
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 local function LogOut(e,p)  --// Se activa cuando un jugador desloguea.
@@ -247,12 +249,11 @@ end
 local function LuaLoad(e) --// Se activa al iniciar el Worldserver y también cada vez que el LuaEngine se refresca.
 	AuthDBExecute("CREATE TABLE IF NOT EXISTS `_promos` (`charguid` INT NOT NULL UNIQUE, `ip` VARCHAR(20) NOT NULL, `promos` TINYINT NOT NULL)")
 	--AuthDBExecute("DELETE FROM `_promos`")  --> Activa esta línea para limpiar el registro de promociones al escribir .reload eluna
-
 --[[ 
 	El código de abajo hará que las habilidades que enseñan los entrenadores sean gratuitas. 
 	Si te interesa esto, activa las 2 líneas de código y cierra y abre el worldserver para que surta efecto.
 	***GUARDA UNA COPIA DE SEGURIDAD de la tabla npc_trainer antes de aplicar esto, 
-	el trabajo de poner todo por defecto sin tener una copia es bastante. 								]]
+	el trabajo de poner todo por defecto sin tener una copia es bastante. 	]]
 
 --	AuthDBExecute("UPDATE `npc_trainer` SET `MoneyCost` = 0 WHERE `ID` IN (200001,200002,200003,200004,200005,200006"..
 --	..",200007,200008,200009,200010,200011,200012,200013,200014,200015,200016,200017,200018,200019,200020,200021)")
