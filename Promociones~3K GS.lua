@@ -1,14 +1,15 @@
--- Ariel Camilo - Agosto 2023.
+-- Ariel Camilo - Agosto 2023. 
 
 -- CONFIGURACIÓN --
-    local SCRIPT_MODULE       = true  --> Habilita o deshabilita el Script.
-    local PROMO_LEVEL         = 80    --> El nivel al que se subirán los jugadores. Recuerda que la ropa que vas a regalar, tiene restricciones de nivel.
-    local PROMOS_PER_ACCOUNT  = 1     --> Promos por cuenta.
-    local PROMOS_PER_IP       = 1     --> Promos por IP.
-    local GIFT_BAG            = {give=true, id=51809, amount=1} --> Regalar bolsas o no, el ID de la bolsa y la cantidad. 51809 = Agujero portátil.
-    local GOLD                = 2500  --> Escribe la cantidad de ORO que vas a regalar por promoción.
-    local TEACH_RIDING        = true  --> Define si vas a regalar también todas las habilidades de jinete, incluyendo Vuelo en clima frío.
-    local NPC_ID              = 100000 --> El Entry del NPC que hablará con los jugadores.
+    local SCRIPT_MODULE     = true  --> Habilita o deshabilita el Script.
+    local PROMO_LEVEL       = 80    --> El nivel al que se subirán los jugadores. Recuerda que la ropa que vas a regalar, tiene restricciones de nivel.
+    local PROMOS_PER_ACCOUNT= 1     --> Promos por cuenta.
+    local PROMOS_PER_IP     = 1     --> Promos por IP.
+    local GIFT_BAG          = {give=true, id=51809, amount=1} --> Decide si regalar una bolsa o no, el ID de la bolsa y la cantidad.
+    local GOLD              = 2500  --> Escribe la cantidad de ORO que vas a regalar por promoción.
+    local TEACH_RIDING      = true  --> Define si vas a regalar también todas las habilidades de jinete, incluyendo Vuelo en clima frío.
+    local NPC_ID            = 100000 --> El Entry del NPC que hablará con los jugadores.
+    local DK_HELPER         = true  --> Sacar a los DK de manera legal de su zona de inicio, solo al hacer login.
 
 --[[*NOTA DE SEGURIDAD* Es recomendable que PROMOS_PER_ACCOUNT y PROMOS_PER_IP tengan un mismo valor, ya que este Script
     almacena una IP del jugador al momento de recibir la promo, significa que si el jugador se cambia la IP,
@@ -19,9 +20,10 @@
     VALORES RECOMENDADOS: 1 o 2 para ambas variables, máximo.
 
     --> Los personajes promocionados tendrán un GearScore de entre 3030 a 3099, lo justo para poder anotar heroicas.
-    --> Recomiendo que el modelid1 de NPC que vayas a usar, tenga animaciones de casteo. (Por defecto es una Elfa de sangre con un model 21419)]]
+    --> Recomiendo que el modelo de NPC que uses, tenga animaciones de casteo.]]
 --------------------------------------------------------------------------------------------------------------------
-local weapons = { -- IDs de las spells de armas en el juego. Aquí también se enseña Placa y Malla, para poder equipar los objetos.
+
+local weapons = { -- IDs de las spells de armas en el juego.
     [1]={264,2567,200,266,5011,1180,201,202,196,197,198,199,227,15590,750}, --Guerrero
     [2]={200,201,202,196,197,198,199,750},                                  --Paladín
     [4]={264,2567,200,266,5011,227,1180,201,202,196,197,15590,8737},        --Cazador
@@ -222,7 +224,7 @@ local function Hello (E,P,U) -- Esta función abre la ventana de diálogo del NP
     end          
 end   RegisterCreatureGossipEvent(NPC_ID, 1, Hello)
 
-local function Click (event, P, U, S, I) -- Al hacer click en una opción del menú.
+local function Click (event, P, U, S, I) 
 
     if SCRIPT_MODULE then
 
@@ -263,7 +265,7 @@ local function Click (event, P, U, S, I) -- Al hacer click en una opción del me
 
             P:GossipClearMenu()
 
-            if roles.tank then --> Mostrar opciones de equipo en la ventana según roles disponibles.
+            if roles.tank then
                 GOSSIP(P,   iT.."Tanque",       100, C, false, msg)
             end
             if roles.melee then
@@ -295,12 +297,54 @@ local function Click (event, P, U, S, I) -- Al hacer click en una opción del me
     end
 end     RegisterCreatureGossipEvent(NPC_ID, 2, Click)
 
--- NO TOCAR DE ACÁ PARA ABAJO --
 local function LogIn(e, P) --> Al logear.
     local N, G, A, I = P:GetName(), P:GetGUIDLow(), P:GetAccountId(), P:GetPlayerIP()
     local query = string.format("INSERT IGNORE INTO `aa_promotion` VALUES ('%s', %d, %d, '%s', 0)", N, G, A, I)
     CharDBExecute(query)
     CharDBExecute("UPDATE `aa_promotion` SET `ip` = '"..I.."' WHERE `account` = "..A) --> Actualizamos IP cada vez que se hace login.
+
+    if DK_HELPER and (P:GetClassMask() == 32) and (P:GetLevel() == 55) then --> Solo para DKs recién nacidos.
+
+        local RAZ = {[1]={12742}, [2]={12748}, [4]={12744}, [8]={12743}, [16]={12750}, 
+        [32]={12739}, [64]={12745}, [128]={12749}, [512]={12747}, [1024]={12746}}
+
+        local HO1 = {12593,12619,12842,12848,12636,12641,12657,12849,12850,12670,12678,12680,12679,12733,12687,12697,
+                    12698,12700,12701,12706,12714,12716,12715,12719,12722,12720,12723,12724,12725,12727,12738}
+        local AL1 = {12593,12619,12842,12848,12636,12641,12657,12849,12850,12670,12678,12680,12679,12733,12687,12697,
+                    12698,12700,12701,12706,12714,12716,12715,12719,12722,12720,12723,12724,12725,12727,12738}
+        local HO2 = {12751,12754,12755,12756,12757,12778,12779,12800,12801,13165,13166,13189}
+        local AL2 = {12751,12754,12755,12756,12757,12778,12779,12800,12801,13165,13166,13188}
+
+        local H, R = P:IsHorde(), P:GetRaceMask()
+        local function Quests(ob,qq) ob:AddQuest(qq) ob:CompleteQuest(qq) ob:RewardQuest(qq) end
+
+        local function delayed (Ev, del, rep, p)
+            p:Say("Completando misiones...",0)
+            if p:IsHorde() then   
+                for i=1, #HO1 do 
+                    Quests(p, HO1[i]) 
+                end 
+                Quests(p, RAZ[R][1])
+                for i=1, #HO2 do 
+                    Quests(p, HO2[i]) 
+                end
+                p:SetLevel(58) 
+                p:Teleport(1, 1643.5269, -4411.58, 16.9977, 5.1409) 
+            else    
+                for i=1, #AL1 do 
+                    Quests(p, AL1[i]) 
+                end 
+                Quests(p, RAZ[R][1]) 
+                for i=1, #AL2 do 
+                    Quests(p, AL2[i]) 
+                end
+                p:SetLevel(58) 
+                p:Teleport(0, -8843.5966, 642.2538, 95.8736, 5.4346)
+            end
+            p:AddItem(38632, 1)
+        end  
+        P:RegisterEvent(delayed, 2000) 
+    end
 end     RegisterPlayerEvent(3,  LogIn)
 
 local function LogOut(e, P) --> Al deslogear.
